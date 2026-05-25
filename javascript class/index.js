@@ -20,9 +20,10 @@ let rally = {
 };
 
 let trainTeam = () => {
-  state.fitness += 5 * train.fitness;
-  state.morale +=   train.morale;
-  state.tactics += 5 * train.tactics;
+  // Apply the configured train increments (no unintended extra multipliers)
+  state.fitness += train.fitness;
+  state.morale  += train.morale;
+  state.tactics += train.tactics;
 
   state.trainCount++;
 
@@ -31,8 +32,9 @@ let trainTeam = () => {
 };
 
 let rallyTeam = () => {
+  // Apply rally increments as configured
   state.fitness += rally.fitness;
-  state.morale += rally.morale;
+  state.morale  += rally.morale;
   state.tactics += rally.tactics;
 
   state.rallyCount++;
@@ -66,4 +68,8 @@ rallyTeam();
 checkReadiness();
 
 const cars = ["Saab", "Volvo", "BMW"];
-document.getElementById("demo").innerHTML = cars;
+// Guard DOM access so this file can run in Node as well as the browser
+if (typeof document !== 'undefined') {
+  const el = document.getElementById("demo");
+  if (el) el.innerHTML = cars.join(', ');
+}

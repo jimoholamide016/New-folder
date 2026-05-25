@@ -4,438 +4,158 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Student Record System — Corestream Academy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            heading: ['"DM Serif Display"', 'serif'],
+            body:    ['"Outfit"', 'sans-serif'],
+            mono:    ['"DM Mono"', 'monospace'],
+          },
+          colors: {
+            bg:      '#0e1117',
+            surface: '#161b27',
+            card:    '#1c2333',
+            border:  '#2a3347',
+            accent:  '#4f9ef8',
+            accent2: '#a78bfa',
+            pass:    '#34d399',
+            fail:    '#f87171',
+            warn:    '#fbbf24',
+            txt:     '#e8eaf0',
+            muted:   '#7c8aab',
+          },
+          keyframes: {
+            slideIn: {
+              from: { opacity: '0', transform: 'translateY(12px)' },
+              to:   { opacity: '1', transform: 'translateY(0)' },
+            }
+          },
+          animation: {
+            slideIn: 'slideIn 0.35s ease both',
+          }
+        }
+      }
+    }
+  </script>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg:        #0e1117;
-      --surface:   #161b27;
-      --card:      #1c2333;
-      --border:    #2a3347;
-      --accent:    #4f9ef8;
-      --accent2:   #a78bfa;
-      --pass:      #34d399;
-      --fail:      #f87171;
-      --warn:      #fbbf24;
-      --text:      #e8eaf0;
-      --muted:     #7c8aab;
-      --font-head: 'DM Serif Display', serif;
-      --font-body: 'Outfit', sans-serif;
-      --font-mono: 'DM Mono', monospace;
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--font-body);
-      font-size: 15px;
-      min-height: 100vh;
-      padding: 2rem 1rem 4rem;
-    }
-
-    /* header */
-    .header {
-      max-width: 860px;
-      margin: 0 auto 2.5rem;
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 1rem;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 1.25rem;
-    }
-    .header-left h1 {
-      font-family: var(--font-head);
-      font-size: 2rem;
-      font-weight: 400;
-      letter-spacing: -0.01em;
-      color: #fff;
-    }
-    .header-left p {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 2px;
-      font-weight: 300;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-    .badge-count {
-      background: var(--accent);
-      color: #fff;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 4px 12px;
-      border-radius: 99px;
-      font-family: var(--font-mono);
-    }
-
-    /* stats bar */
-    .stats {
-      max-width: 860px;
-      margin: 0 auto 2rem;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-    }
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 1rem 1.25rem;
-    }
-    .stat-card .label {
-      font-size: 11px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      font-weight: 500;
-      margin-bottom: 6px;
-    }
-    .stat-card .value {
-      font-family: var(--font-mono);
-      font-size: 28px;
-      font-weight: 500;
-      color: #fff;
-    }
-    .stat-card .value.pass  { color: var(--pass); }
-    .stat-card .value.fail  { color: var(--fail); }
-    .stat-card .value.avg   { color: var(--accent); }
-
-    /* student list */
-    .list-wrap { max-width: 860px; margin: 0 auto 2rem; }
-    .list-title {
-      font-size: 11px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-weight: 500;
-      margin-bottom: 10px;
-    }
-
-    .student-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 1rem 1.25rem;
-      display: grid;
-      grid-template-columns: 48px 1fr auto auto;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 10px;
-      transition: border-color 0.2s, transform 0.15s;
-      animation: slideIn 0.35s ease both;
-    }
-    .student-card:hover { border-color: #3d4f6e; transform: translateY(-1px); }
-
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateY(12px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .avatar {
-      width: 48px; height: 48px;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-family: var(--font-mono);
-      font-size: 14px;
-      font-weight: 500;
-      flex-shrink: 0;
-    }
-    .avatar.pass { background: rgba(52,211,153,0.12); color: var(--pass); }
-    .avatar.fail { background: rgba(248,113,113,0.12); color: var(--fail); }
-
-    .student-info .name {
-      font-size: 15px;
-      font-weight: 500;
-      color: #fff;
-      margin-bottom: 3px;
-    }
-    .student-info .meta {
-      font-size: 12px;
-      color: var(--muted);
-      font-family: var(--font-mono);
-    }
-    .student-info .meta span { margin-right: 12px; }
-
-    .score-bar-wrap { width: 120px; }
-    .score-label {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--muted);
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 4px;
-    }
-    .score-bar {
-      height: 5px;
-      background: var(--border);
-      border-radius: 99px;
-      overflow: hidden;
-    }
-    .score-fill {
-      height: 100%;
-      border-radius: 99px;
-      transition: width 0.6s cubic-bezier(.4,0,.2,1);
-    }
-    .score-fill.pass { background: var(--pass); }
-    .score-fill.fail { background: var(--fail); }
-
-    .status-pill {
-      font-size: 11px;
-      font-weight: 600;
-      font-family: var(--font-mono);
-      padding: 5px 14px;
-      border-radius: 99px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      flex-shrink: 0;
-    }
-    .status-pill.pass { background: rgba(52,211,153,0.12); color: var(--pass); border: 1px solid rgba(52,211,153,0.25); }
-    .status-pill.fail { background: rgba(248,113,113,0.12); color: var(--fail); border: 1px solid rgba(248,113,113,0.25); }
-
-    .btn-remove {
-      background: none;
-      border: none;
-      color: var(--muted);
-      cursor: pointer;
-      font-size: 18px;
-      padding: 4px 6px;
-      border-radius: 6px;
-      transition: color 0.2s, background 0.2s;
-      line-height: 1;
-    }
-    .btn-remove:hover { color: var(--fail); background: rgba(248,113,113,0.08); }
-
-    /* add form */
-    .add-wrap {
-      max-width: 860px;
-      margin: 0 auto 2rem;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 1.25rem 1.5rem;
-    }
-    .add-wrap h2 {
-      font-size: 13px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      font-weight: 500;
-      margin-bottom: 14px;
-      font-family: var(--font-body);
-    }
-    .form-row {
-      display: grid;
-      grid-template-columns: 2fr 1fr 1fr 1fr auto;
-      gap: 10px;
-      align-items: end;
-    }
-    .field label {
-      display: block;
-      font-size: 11px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      font-weight: 500;
-      margin-bottom: 5px;
-    }
-    .field input {
-      width: 100%;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 9px;
-      color: var(--text);
-      font-family: var(--font-body);
-      font-size: 14px;
-      padding: 9px 12px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .field input:focus { border-color: var(--accent); }
-    .field input::placeholder { color: #3d4f6e; }
-
-    .btn-add {
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 9px;
-      font-family: var(--font-body);
-      font-size: 14px;
-      font-weight: 600;
-      padding: 0 20px;
-      height: 40px;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
-      white-space: nowrap;
-    }
-    .btn-add:hover  { background: #3b8ef0; }
-    .btn-add:active { transform: scale(0.97); }
-
-    .form-error {
-      font-size: 12px;
-      color: var(--fail);
-      margin-top: 8px;
-      display: none;
-      font-family: var(--font-mono);
-    }
-
-    /* console */
-    .console-wrap {
-      max-width: 860px;
-      margin: 0 auto;
-      background: #0a0d14;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      overflow: hidden;
-    }
-    .console-header {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 10px 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .dot { width: 10px; height: 10px; border-radius: 50%; }
-    .dot.r { background: #f87171; }
-    .dot.y { background: #fbbf24; }
-    .dot.g { background: #34d399; }
-    .console-label {
-      font-size: 12px;
-      color: var(--muted);
-      font-family: var(--font-mono);
-      margin-left: 6px;
-    }
-    .console-body {
-      padding: 1.25rem 1.5rem;
-    }
-    .console-body pre {
-      font-family: var(--font-mono);
-      font-size: 13px;
-      color: #a0aec8;
-      line-height: 1.8;
-      white-space: pre-wrap;
-    }
-    .console-body pre .c-green  { color: var(--pass); }
-    .console-body pre .c-red    { color: var(--fail); }
-    .console-body pre .c-blue   { color: var(--accent); }
-    .console-body pre .c-purple { color: var(--accent2); }
-    .console-body pre .c-yellow { color: var(--warn); }
-    .console-body pre .c-muted  { color: #3d4f6e; }
-
-    /* scope note */
-    .scope-note {
-      max-width: 860px;
-      margin: 1.5rem auto 0;
-      background: rgba(167,139,250,0.07);
-      border: 1px solid rgba(167,139,250,0.2);
-      border-radius: 14px;
-      padding: 1rem 1.25rem;
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-    }
-    .scope-note .icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
-    .scope-note .text { font-size: 13px; color: #b8a8e8; line-height: 1.6; font-family: var(--font-mono); }
-    .scope-note .text strong { color: var(--accent2); font-weight: 500; }
-
-    @media (max-width: 600px) {
-      .form-row { grid-template-columns: 1fr 1fr; }
-      .stats     { grid-template-columns: 1fr; }
-      .student-card { grid-template-columns: 40px 1fr auto; }
-      .score-bar-wrap { display: none; }
-    }
+    body { font-family: 'Outfit', sans-serif; }
+    .font-mono-custom { font-family: 'DM Mono', monospace; }
+    .font-heading { font-family: 'DM Serif Display', serif; }
+    .c-purple { color: #a78bfa; }
+    .c-green  { color: #34d399; }
+    .c-red    { color: #f87171; }
+    .c-blue   { color: #4f9ef8; }
+    .c-yellow { color: #fbbf24; }
+    .c-muted  { color: #3d4f6e; }
+    input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
   </style>
 </head>
-<body>
+<body class="bg-bg text-txt min-h-screen px-4 py-8 pb-16">
 
-  <header class="header">
-    <div class="header-left">
-      <h1>Student Records</h1>
-      <p>Corestream Academy &mdash; 2025</p>
+  <!-- Header -->
+  <header class="max-w-3xl mx-auto mb-10 flex items-end justify-between gap-4 border-b border-border pb-5">
+    <div>
+      <h1 class="font-heading text-4xl font-normal text-white tracking-tight">Student Records</h1>
+      <p class="text-xs text-muted uppercase tracking-widest mt-1 font-light">Corestream Academy &mdash; 2025</p>
     </div>
-    <span class="badge-count" id="total-count">3 students</span>
+    <span id="total-count" class="font-mono-custom text-xs font-semibold bg-accent text-white px-3 py-1 rounded-full">3 students</span>
   </header>
 
-  <section class="stats">
-    <div class="stat-card">
-      <div class="label">Average score</div>
-      <div class="value avg" id="stat-avg">—</div>
+  <!-- Stats -->
+  <section class="max-w-3xl mx-auto grid grid-cols-3 gap-3 mb-8">
+    <div class="bg-surface border border-border rounded-2xl p-4">
+      <p class="text-xs text-muted uppercase tracking-wider font-medium mb-1">Average score</p>
+      <p id="stat-avg" class="font-mono-custom text-3xl font-medium text-accent">—</p>
     </div>
-    <div class="stat-card">
-      <div class="label">Passed</div>
-      <div class="value pass" id="stat-pass">—</div>
+    <div class="bg-surface border border-border rounded-2xl p-4">
+      <p class="text-xs text-muted uppercase tracking-wider font-medium mb-1">Passed</p>
+      <p id="stat-pass" class="font-mono-custom text-3xl font-medium text-pass">—</p>
     </div>
-    <div class="stat-card">
-      <div class="label">Failed</div>
-      <div class="value fail" id="stat-fail">—</div>
+    <div class="bg-surface border border-border rounded-2xl p-4">
+      <p class="text-xs text-muted uppercase tracking-wider font-medium mb-1">Failed</p>
+      <p id="stat-fail" class="font-mono-custom text-3xl font-medium text-fail">—</p>
     </div>
   </section>
 
-  <section class="list-wrap">
-    <p class="list-title">All students</p>
+  <!-- Student List -->
+  <section class="max-w-3xl mx-auto mb-8">
+    <p class="text-xs text-muted uppercase tracking-widest font-medium mb-3">All students</p>
     <div id="student-list"></div>
   </section>
 
-  <section class="add-wrap">
-    <h2>➕ Add a student — students.push()</h2>
-    <div class="form-row">
-      <div class="field">
-        <label>Name</label>
-        <input type="text" id="in-name" placeholder="e.g. Ada" />
+  <!-- Add Student Form -->
+  <section class="max-w-3xl mx-auto bg-surface border border-border rounded-2xl p-5 mb-8">
+    <h2 class="text-xs text-muted uppercase tracking-wider font-medium mb-4">➕ Add a student — students.push()</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 items-end">
+      <div class="sm:col-span-2">
+        <label class="block text-xs text-muted uppercase tracking-wider font-medium mb-1">Name</label>
+        <input id="in-name" type="text" placeholder="e.g. Ada"
+          class="w-full bg-card border border-border rounded-xl text-txt text-sm px-3 py-2 outline-none focus:border-accent transition-colors placeholder-border" />
       </div>
-      <div class="field">
-        <label>Age</label>
-        <input type="number" id="in-age" placeholder="20" min="10" max="40" />
+      <div>
+        <label class="block text-xs text-muted uppercase tracking-wider font-medium mb-1">Age</label>
+        <input id="in-age" type="number" placeholder="20" min="1" max="120"
+          class="w-full bg-card border border-border rounded-xl text-txt text-sm px-3 py-2 outline-none focus:border-accent transition-colors placeholder-border" />
       </div>
-      <div class="field">
-        <label>Score (0–100)</label>
-        <input type="number" id="in-score" placeholder="75" min="0" max="100" />
-      </div>
-      <div class="field field-btn">
-        <button class="btn-add" onclick="addStudent()">Add Student</button>
+      <div>
+        <label class="block text-xs text-muted uppercase tracking-wider font-medium mb-1">Score (0–100)</label>
+        <input id="in-score" type="number" placeholder="75" min="0" max="100"
+          class="w-full bg-card border border-border rounded-xl text-txt text-sm px-3 py-2 outline-none focus:border-accent transition-colors placeholder-border" />
       </div>
     </div>
-    <p class="form-error" id="form-error"></p>
-  </section>
-
-  <section class="console-wrap">
-    <div class="console-header">
-      <div class="dot r"></div>
-      <div class="dot y"></div>
-      <div class="dot g"></div>
-      <span class="console-label">checkResult() — console output</span>
-    </div>
-    <div class="console-body">
-      <pre id="console-out"></pre>
+    <div class="mt-3 flex items-center gap-3">
+      <button onclick="addStudent()"
+        class="bg-accent hover:bg-blue-400 active:scale-95 text-white text-sm font-semibold px-5 py-2 rounded-xl transition-all">
+        Add Student
+      </button>
+      <p id="form-error" class="hidden text-xs text-fail font-mono-custom"></p>
     </div>
   </section>
 
-  <div class="scope-note">
-    <span class="icon">🔒</span>
-    <div class="text">
-      <strong>Scope:</strong> Inside <code>checkResult()</code>, the variable <code>let schoolName = "Corestream Academy"</code> is declared. It only exists <strong>inside</strong> that function's curly braces <code>{ }</code>.
-      Trying to use <code>schoolName</code> outside the function would throw a <strong>ReferenceError: schoolName is not defined</strong>.
+  <!-- Console -->
+  <section class="max-w-3xl mx-auto bg-[#0a0d14] border border-border rounded-2xl overflow-hidden mb-6">
+    <div class="bg-surface border-b border-border px-4 py-3 flex items-center gap-2">
+      <span class="w-3 h-3 rounded-full bg-fail"></span>
+      <span class="w-3 h-3 rounded-full bg-warn"></span>
+      <span class="w-3 h-3 rounded-full bg-pass"></span>
+      <span class="font-mono-custom text-xs text-muted ml-2">checkResult() — console output</span>
     </div>
+    <div class="p-5">
+      <pre id="console-out" class="font-mono-custom text-sm text-[#a0aec8] leading-relaxed whitespace-pre-wrap"></pre>
+    </div>
+  </section>
+
+  <!-- Scope Note -->
+  <div class="max-w-3xl mx-auto bg-[rgba(167,139,250,0.07)] border border-[rgba(167,139,250,0.2)] rounded-2xl p-4 flex gap-3 items-start">
+    <span class="text-xl flex-shrink-0 mt-0.5">🔒</span>
+    <p class="font-mono-custom text-xs text-[#b8a8e8] leading-relaxed">
+      <strong class="text-accent2 font-medium">Scope:</strong>
+      Inside <code>checkResult()</code>, the variable <code>let schoolName = "Corestream Academy"</code> is declared.
+      It only exists <strong class="text-accent2">inside</strong> that function's curly braces <code>{ }</code>.
+      Trying to use <code>schoolName</code> outside throws a <strong class="text-fail">ReferenceError: schoolName is not defined</strong>.
+    </p>
   </div>
 
   <script>
-    // ── DATA ─────────────────────────────────────────────────────────
+    // ── DATA ──────────────────────────────────────────────────────────
     let students = [
       { name: "John",  age: 20, score: 70 },
       { name: "Mary",  age: 22, score: 45 },
       { name: "Peter", age: 17, score: 88 }
     ];
 
-    // ── MAIN FUNCTION (scope + loop + if/else + operators) ────────────
+    // ── MAIN FUNCTION ─────────────────────────────────────────────────
     function checkResult() {
       // Scope: schoolName only exists inside this function
       let schoolName = "Corestream Academy";
 
       let lines = [];
-      lines.push({ text: "// " + schoolName, cls: "c-purple" });
-      lines.push({ text: "// ─────────────────────────────", cls: "c-muted" });
+      lines.push({ text: "// " + schoolName,                cls: "c-purple" });
+      lines.push({ text: "// ─────────────────────────────", cls: "c-muted"  });
 
       let totalScore = 0;
       let passCount  = 0;
@@ -443,9 +163,8 @@
 
       for (let i = 0; i < students.length; i++) {
         let s = students[i];
-        totalScore = totalScore + s.score;   // + operator
+        totalScore = totalScore + s.score;
 
-        // Pass / Fail
         if (s.score >= 50) {
           lines.push({ text: s.name + " passed with " + s.score, cls: "c-green" });
           passCount = passCount + 1;
@@ -454,33 +173,25 @@
           failCount = failCount + 1;
         }
 
-        // Adult check
         if (s.age > 18) {
-          lines.push({ text: "  → " + s.name + " is an adult", cls: "" });
+          lines.push({ text: "  → " + s.name + " is an adult",     cls: "" });
         } else {
           lines.push({ text: "  → " + s.name + " is not an adult", cls: "c-yellow" });
         }
       }
 
-      // Average using operators
       let average = totalScore / students.length;
 
-      lines.push({ text: "// ─────────────────────────────", cls: "c-muted" });
-      lines.push({ text: "Average score is " + Math.round(average), cls: "c-blue" });
+      lines.push({ text: "// ─────────────────────────────",                  cls: "c-muted" });
+      lines.push({ text: "Average score is " + Math.round(average),           cls: "c-blue"  });
+      lines.push({ text: "// ─────────────────────────────",                  cls: "c-muted" });
+      lines.push({ text: "// Outside this function:",                         cls: "c-muted" });
+      lines.push({ text: "// console.log(schoolName) → ❌ ReferenceError",    cls: "c-red"   });
 
-      // Scope demo line
-      lines.push({ text: "// ─────────────────────────────", cls: "c-muted" });
-      lines.push({ text: "// Outside this function:", cls: "c-muted" });
-      lines.push({ text: "// console.log(schoolName) → ❌ ReferenceError", cls: "c-red" });
-
-      // Update console
-      let pre = document.getElementById("console-out");
-      pre.innerHTML = lines.map(l =>
-        l.cls
-          ? '<span class="' + l.cls + '">' + escHtml(l.text) + '</span>'
-          : escHtml(l.text)
+      document.getElementById("console-out").innerHTML = lines.map(l =>
+        l.cls ? '<span class="' + l.cls + '">' + escHtml(l.text) + '</span>'
+              : escHtml(l.text)
       ).join("\n");
-
 
       document.getElementById("stat-avg").textContent  = Math.round(average);
       document.getElementById("stat-pass").textContent = passCount;
@@ -491,43 +202,60 @@
       renderList();
     }
 
-    // ── RENDER STUDENT CARDS ──────────────────────────────────────────
+    // ── RENDER CARDS ──────────────────────────────────────────────────
     function renderList() {
       let list = document.getElementById("student-list");
       list.innerHTML = "";
+
       for (let i = 0; i < students.length; i++) {
-        let s = students[i];
-        let passed = s.score >= 50;
-        let adult  = s.age > 18;
-        let cls    = passed ? "pass" : "fail";
+        let s       = students[i];
+        let passed  = s.score >= 50;
+        let adult   = s.age > 18;
         let initials = s.name.slice(0, 2).toUpperCase();
-        let pct = Math.min(100, s.score);
+        let pct     = Math.min(100, s.score);
+
+        let avatarCls  = passed
+          ? "bg-[rgba(52,211,153,0.12)] text-pass"
+          : "bg-[rgba(248,113,113,0.12)] text-fail";
+        let pillCls    = passed
+          ? "bg-[rgba(52,211,153,0.12)] text-pass border border-[rgba(52,211,153,0.25)]"
+          : "bg-[rgba(248,113,113,0.12)] text-fail border border-[rgba(248,113,113,0.25)]";
+        let barCls     = passed ? "bg-pass" : "bg-fail";
 
         let card = document.createElement("div");
-        card.className = "student-card";
+        card.className = "bg-card border border-border rounded-2xl px-5 py-4 grid items-center gap-4 mb-3 transition-all duration-200 hover:-translate-y-px hover:border-[#3d4f6e] animate-slideIn";
+        card.style.gridTemplateColumns = "48px 1fr 120px auto auto";
         card.style.animationDelay = (i * 60) + "ms";
+
         card.innerHTML =
-          '<div class="avatar ' + cls + '">' + initials + '</div>' +
-          '<div class="student-info">' +
-            '<div class="name">' + escHtml(s.name) + '</div>' +
-            '<div class="meta">' +
-              '<span>age: ' + s.age + '</span>' +
-              '<span>score: ' + s.score + '</span>' +
+          '<div class="w-12 h-12 rounded-full flex items-center justify-center font-mono-custom text-sm font-medium flex-shrink-0 ' + avatarCls + '">' + initials + '</div>' +
+
+          '<div>' +
+            '<p class="text-white font-medium text-sm mb-0.5">' + escHtml(s.name) + '</p>' +
+            '<p class="font-mono-custom text-xs text-muted">' +
+              '<span class="mr-3">age: ' + s.age + '</span>' +
+              '<span class="mr-3">score: ' + s.score + '</span>' +
               '<span>' + (adult ? '✓ adult' : '✗ not adult') + '</span>' +
+            '</p>' +
+          '</div>' +
+
+          '<div>' +
+            '<p class="font-mono-custom text-xs text-muted mb-1">' + s.score + ' / 100</p>' +
+            '<div class="h-1.5 bg-border rounded-full overflow-hidden">' +
+              '<div class="h-full rounded-full transition-all duration-500 ' + barCls + '" style="width:' + pct + '%"></div>' +
             '</div>' +
           '</div>' +
-          '<div class="score-bar-wrap">' +
-            '<div class="score-label"><span>' + s.score + '/100</span></div>' +
-            '<div class="score-bar"><div class="score-fill ' + cls + '" style="width:' + pct + '%"></div></div>' +
-          '</div>' +
-          '<div class="status-pill ' + cls + '">' + (passed ? 'Passed' : 'Failed') + '</div>' +
-          '<button class="btn-remove" onclick="removeStudent(' + i + ')" title="Remove">×</button>';
+
+          '<span class="font-mono-custom text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full flex-shrink-0 ' + pillCls + '">' + (passed ? 'Passed' : 'Failed') + '</span>' +
+
+          '<button onclick="removeStudent(' + i + ')" title="Remove" ' +
+            'class="text-muted hover:text-fail hover:bg-[rgba(248,113,113,0.08)] text-lg px-2 py-1 rounded-lg transition-all">×</button>';
 
         list.appendChild(card);
       }
     }
 
-    // ── ADD STUDENT (Bonus: students.push) ────────────────────────────
+    // ── ADD STUDENT ───────────────────────────────────────────────────
     function addStudent() {
       let nameVal  = document.getElementById("in-name").value.trim();
       let ageVal   = parseInt(document.getElementById("in-age").value);
@@ -535,21 +263,16 @@
       let errEl    = document.getElementById("form-error");
 
       if (!nameVal || isNaN(ageVal) || isNaN(scoreVal)) {
-        showError("Please fill in all three fields.");
-        return;
+        showError("Please fill in all three fields."); return;
       }
       if (scoreVal < 0 || scoreVal > 100) {
-        showError("Score must be between 0 and 100.");
-        return;
+        showError("Score must be between 0 and 100."); return;
       }
       if (ageVal < 1 || ageVal > 120) {
-        showError("Please enter a valid age.");
-        return;
+        showError("Please enter a valid age."); return;
       }
 
-      errEl.style.display = "none";
-
-      // Bonus: push new object into array
+      errEl.classList.add("hidden");
       students.push({ name: nameVal, age: ageVal, score: scoreVal });
 
       document.getElementById("in-name").value  = "";
@@ -568,7 +291,7 @@
     function showError(msg) {
       let e = document.getElementById("form-error");
       e.textContent = msg;
-      e.style.display = "block";
+      e.classList.remove("hidden");
     }
 
     function escHtml(str) {
@@ -578,14 +301,12 @@
         .replace(/>/g, "&gt;");
     }
 
-    // ── Enter key submits form ────────────────────────────────────────
     ["in-name","in-age","in-score"].forEach(function(id) {
       document.getElementById(id).addEventListener("keydown", function(e) {
         if (e.key === "Enter") addStudent();
       });
     });
 
-    // ── Init ─────────────────────────────────────────────────────────
     checkResult();
   </script>
 </body>
