@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Record System — Corestream Academy</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0e1117;
+      --surface:   #161b27;
+      --card:      #1c2333;
+      --border:    #2a3347;
+      --accent:    #4f9ef8;
+      --accent2:   #a78bfa;
+      --pass:      #34d399;
+      --fail:      #f87171;
+      --warn:      #fbbf24;
+      --text:      #e8eaf0;
+      --muted:     #7c8aab;
+      --font-head: 'DM Serif Display', serif;
+      --font-body: 'Outfit', sans-serif;
+      --font-mono: 'DM Mono', monospace;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+    }
+
+    /* header */
+    .header {
+      max-width: 860px;
+      margin: 0 auto 2.5rem;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.25rem;
+    }
+    .header-left h1 {
+      font-family: var(--font-head);
+      font-size: 2rem;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      color: #fff;
+    }
+    .header-left p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 2px;
+      font-weight: 300;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .badge-count {
+      background: var(--accent);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 99px;
+      font-family: var(--font-mono);
+    }
+
+    /* stats bar */
+    .stats {
+      max-width: 860px;
+      margin: 0 auto 2rem;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1rem 1.25rem;
+    }
+    .stat-card .label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .stat-card .value {
+      font-family: var(--font-mono);
+      font-size: 28px;
+      font-weight: 500;
+      color: #fff;
+    }
+    .stat-card .value.pass  { color: var(--pass); }
+    .stat-card .value.fail  { color: var(--fail); }
+    .stat-card .value.avg   { color: var(--accent); }
+
+    /* student list */
+    .list-wrap { max-width: 860px; margin: 0 auto 2rem; }
+    .list-title {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+
+    .student-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1rem 1.25rem;
+      display: grid;
+      grid-template-columns: 48px 1fr auto auto;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 10px;
+      transition: border-color 0.2s, transform 0.15s;
+      animation: slideIn 0.35s ease both;
+    }
+    .student-card:hover { border-color: #3d4f6e; transform: translateY(-1px); }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .avatar {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+    .avatar.pass { background: rgba(52,211,153,0.12); color: var(--pass); }
+    .avatar.fail { background: rgba(248,113,113,0.12); color: var(--fail); }
+
+    .student-info .name {
+      font-size: 15px;
+      font-weight: 500;
+      color: #fff;
+      margin-bottom: 3px;
+    }
+    .student-info .meta {
+      font-size: 12px;
+      color: var(--muted);
+      font-family: var(--font-mono);
+    }
+    .student-info .meta span { margin-right: 12px; }
+
+    .score-bar-wrap { width: 120px; }
+    .score-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .score-bar {
+      height: 5px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .score-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 0.6s cubic-bezier(.4,0,.2,1);
+    }
+    .score-fill.pass { background: var(--pass); }
+    .score-fill.fail { background: var(--fail); }
+
+    .status-pill {
+      font-size: 11px;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      padding: 5px 14px;
+      border-radius: 99px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      flex-shrink: 0;
+    }
+    .status-pill.pass { background: rgba(52,211,153,0.12); color: var(--pass); border: 1px solid rgba(52,211,153,0.25); }
+    .status-pill.fail { background: rgba(248,113,113,0.12); color: var(--fail); border: 1px solid rgba(248,113,113,0.25); }
+
+    .btn-remove {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 18px;
+      padding: 4px 6px;
+      border-radius: 6px;
+      transition: color 0.2s, background 0.2s;
+      line-height: 1;
+    }
+    .btn-remove:hover { color: var(--fail); background: rgba(248,113,113,0.08); }
+
+    /* add form */
+    .add-wrap {
+      max-width: 860px;
+      margin: 0 auto 2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.25rem 1.5rem;
+    }
+    .add-wrap h2 {
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-weight: 500;
+      margin-bottom: 14px;
+      font-family: var(--font-body);
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+    .field label {
+      display: block;
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+    .field input {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 14px;
+      padding: 9px 12px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .field input:focus { border-color: var(--accent); }
+    .field input::placeholder { color: #3d4f6e; }
+
+    .btn-add {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 0 20px;
+      height: 40px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .btn-add:hover  { background: #3b8ef0; }
+    .btn-add:active { transform: scale(0.97); }
+
+    .form-error {
+      font-size: 12px;
+      color: var(--fail);
+      margin-top: 8px;
+      display: none;
+      font-family: var(--font-mono);
+    }
+
+    /* console */
+    .console-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      background: #0a0d14;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .console-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot.r { background: #f87171; }
+    .dot.y { background: #fbbf24; }
+    .dot.g { background: #34d399; }
+    .console-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-family: var(--font-mono);
+      margin-left: 6px;
+    }
+    .console-body {
+      padding: 1.25rem 1.5rem;
+    }
+    .console-body pre {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: #a0aec8;
+      line-height: 1.8;
+      white-space: pre-wrap;
+    }
+    .console-body pre .c-green  { color: var(--pass); }
+    .console-body pre .c-red    { color: var(--fail); }
+    .console-body pre .c-blue   { color: var(--accent); }
+    .console-body pre .c-purple { color: var(--accent2); }
+    .console-body pre .c-yellow { color: var(--warn); }
+    .console-body pre .c-muted  { color: #3d4f6e; }
+
+    /* scope note */
+    .scope-note {
+      max-width: 860px;
+      margin: 1.5rem auto 0;
+      background: rgba(167,139,250,0.07);
+      border: 1px solid rgba(167,139,250,0.2);
+      border-radius: 14px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .scope-note .icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+    .scope-note .text { font-size: 13px; color: #b8a8e8; line-height: 1.6; font-family: var(--font-mono); }
+    .scope-note .text strong { color: var(--accent2); font-weight: 500; }
+
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr 1fr; }
+      .stats     { grid-template-columns: 1fr; }
+      .student-card { grid-template-columns: 40px 1fr auto; }
+      .score-bar-wrap { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-left">
+      <h1>Student Records</h1>
+      <p>Corestream Academy &mdash; 2025</p>
+    </div>
+    <span class="badge-count" id="total-count">3 students</span>
+  </header>
+
+  <section class="stats">
+    <div class="stat-card">
+      <div class="label">Average score</div>
+      <div class="value avg" id="stat-avg">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Passed</div>
+      <div class="value pass" id="stat-pass">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Failed</div>
+      <div class="value fail" id="stat-fail">—</div>
+    </div>
+  </section>
+
+  <section class="list-wrap">
+    <p class="list-title">All students</p>
+    <div id="student-list"></div>
+  </section>
+
+  <section class="add-wrap">
+    <h2>➕ Add a student — students.push()</h2>
+    <div class="form-row">
+      <div class="field">
+        <label>Name</label>
+        <input type="text" id="in-name" placeholder="e.g. Ada" />
+      </div>
+      <div class="field">
+        <label>Age</label>
+        <input type="number" id="in-age" placeholder="20" min="10" max="40" />
+      </div>
+      <div class="field">
+        <label>Score (0–100)</label>
+        <input type="number" id="in-score" placeholder="75" min="0" max="100" />
+      </div>
+      <div class="field field-btn">
+        <button class="btn-add" onclick="addStudent()">Add Student</button>
+      </div>
+    </div>
+    <p class="form-error" id="form-error"></p>
+  </section>
+
+  <section class="console-wrap">
+    <div class="console-header">
+      <div class="dot r"></div>
+      <div class="dot y"></div>
+      <div class="dot g"></div>
+      <span class="console-label">checkResult() — console output</span>
+    </div>
+    <div class="console-body">
+      <pre id="console-out"></pre>
+    </div>
+  </section>
+
+  <div class="scope-note">
+    <span class="icon">🔒</span>
+    <div class="text">
+      <strong>Scope:</strong> Inside <code>checkResult()</code>, the variable <code>let schoolName = "Corestream Academy"</code> is declared. It only exists <strong>inside</strong> that function's curly braces <code>{ }</code>.
+      Trying to use <code>schoolName</code> outside the function would throw a <strong>ReferenceError: schoolName is not defined</strong>.
+    </div>
+  </div>
+
+  <script>
+    // ── DATA ─────────────────────────────────────────────────────────
+    let students = [
+      { name: "John",  age: 20, score: 70 },
+      { name: "Mary",  age: 22, score: 45 },
+      { name: "Peter", age: 17, score: 88 }
+    ];
+
+    // ── MAIN FUNCTION (scope + loop + if/else + operators) ────────────
+    function checkResult() {
+      // Scope: schoolName only exists inside this function
+      let schoolName = "Corestream Academy";
+
+      let lines = [];
+      lines.push({ text: "// " + schoolName, cls: "c-purple" });
+      lines.push({ text: "// ─────────────────────────────", cls: "c-muted" });
+
+      let totalScore = 0;
+      let passCount  = 0;
+      let failCount  = 0;
+
+      for (let i = 0; i < students.length; i++) {
+        let s = students[i];
+        totalScore = totalScore + s.score;   // + operator
+
+        // Pass / Fail
+        if (s.score >= 50) {
+          lines.push({ text: s.name + " passed with " + s.score, cls: "c-green" });
+          passCount = passCount + 1;
+        } else {
+          lines.push({ text: s.name + " failed with " + s.score, cls: "c-red" });
+          failCount = failCount + 1;
+        }
+
+        // Adult check
+        if (s.age > 18) {
+          lines.push({ text: "  → " + s.name + " is an adult", cls: "" });
+        } else {
+          lines.push({ text: "  → " + s.name + " is not an adult", cls: "c-yellow" });
+        }
+      }
+
+      // Average using operators
+      let average = totalScore / students.length;
+
+      lines.push({ text: "// ─────────────────────────────", cls: "c-muted" });
+      lines.push({ text: "Average score is " + Math.round(average), cls: "c-blue" });
+
+      // Scope demo line
+      lines.push({ text: "// ─────────────────────────────", cls: "c-muted" });
+      lines.push({ text: "// Outside this function:", cls: "c-muted" });
+      lines.push({ text: "// console.log(schoolName) → ❌ ReferenceError", cls: "c-red" });
+
+      // Update console
+      let pre = document.getElementById("console-out");
+      pre.innerHTML = lines.map(l =>
+        l.cls
+          ? '<span class="' + l.cls + '">' + escHtml(l.text) + '</span>'
+          : escHtml(l.text)
+      ).join("\n");
+
+
+      document.getElementById("stat-avg").textContent  = Math.round(average);
+      document.getElementById("stat-pass").textContent = passCount;
+      document.getElementById("stat-fail").textContent = failCount;
+      document.getElementById("total-count").textContent =
+        students.length + " student" + (students.length !== 1 ? "s" : "");
+
+      renderList();
+    }
+
+    // ── RENDER STUDENT CARDS ──────────────────────────────────────────
+    function renderList() {
+      let list = document.getElementById("student-list");
+      list.innerHTML = "";
+      for (let i = 0; i < students.length; i++) {
+        let s = students[i];
+        let passed = s.score >= 50;
+        let adult  = s.age > 18;
+        let cls    = passed ? "pass" : "fail";
+        let initials = s.name.slice(0, 2).toUpperCase();
+        let pct = Math.min(100, s.score);
+
+        let card = document.createElement("div");
+        card.className = "student-card";
+        card.style.animationDelay = (i * 60) + "ms";
+        card.innerHTML =
+          '<div class="avatar ' + cls + '">' + initials + '</div>' +
+          '<div class="student-info">' +
+            '<div class="name">' + escHtml(s.name) + '</div>' +
+            '<div class="meta">' +
+              '<span>age: ' + s.age + '</span>' +
+              '<span>score: ' + s.score + '</span>' +
+              '<span>' + (adult ? '✓ adult' : '✗ not adult') + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="score-bar-wrap">' +
+            '<div class="score-label"><span>' + s.score + '/100</span></div>' +
+            '<div class="score-bar"><div class="score-fill ' + cls + '" style="width:' + pct + '%"></div></div>' +
+          '</div>' +
+          '<div class="status-pill ' + cls + '">' + (passed ? 'Passed' : 'Failed') + '</div>' +
+          '<button class="btn-remove" onclick="removeStudent(' + i + ')" title="Remove">×</button>';
+
+        list.appendChild(card);
+      }
+    }
+
+    // ── ADD STUDENT (Bonus: students.push) ────────────────────────────
+    function addStudent() {
+      let nameVal  = document.getElementById("in-name").value.trim();
+      let ageVal   = parseInt(document.getElementById("in-age").value);
+      let scoreVal = parseInt(document.getElementById("in-score").value);
+      let errEl    = document.getElementById("form-error");
+
+      if (!nameVal || isNaN(ageVal) || isNaN(scoreVal)) {
+        showError("Please fill in all three fields.");
+        return;
+      }
+      if (scoreVal < 0 || scoreVal > 100) {
+        showError("Score must be between 0 and 100.");
+        return;
+      }
+      if (ageVal < 1 || ageVal > 120) {
+        showError("Please enter a valid age.");
+        return;
+      }
+
+      errEl.style.display = "none";
+
+      // Bonus: push new object into array
+      students.push({ name: nameVal, age: ageVal, score: scoreVal });
+
+      document.getElementById("in-name").value  = "";
+      document.getElementById("in-age").value   = "";
+      document.getElementById("in-score").value = "";
+      document.getElementById("in-name").focus();
+
+      checkResult();
+    }
+
+    function removeStudent(index) {
+      students.splice(index, 1);
+      checkResult();
+    }
+
+    function showError(msg) {
+      let e = document.getElementById("form-error");
+      e.textContent = msg;
+      e.style.display = "block";
+    }
+
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    // ── Enter key submits form ────────────────────────────────────────
+    ["in-name","in-age","in-score"].forEach(function(id) {
+      document.getElementById(id).addEventListener("keydown", function(e) {
+        if (e.key === "Enter") addStudent();
+      });
+    });
+
+    // ── Init ─────────────────────────────────────────────────────────
+    checkResult();
+  </script>
+</body>
+</html>
