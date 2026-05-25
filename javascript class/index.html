@@ -116,29 +116,7 @@
     </div>
   </section>
 
-  <!-- Console -->
-  <section class="max-w-3xl mx-auto bg-[#0a0d14] border border-border rounded-2xl overflow-hidden mb-6">
-    <div class="bg-surface border-b border-border px-4 py-3 flex items-center gap-2">
-      <span class="w-3 h-3 rounded-full bg-fail"></span>
-      <span class="w-3 h-3 rounded-full bg-warn"></span>
-      <span class="w-3 h-3 rounded-full bg-pass"></span>
-      <span class="font-mono-custom text-xs text-muted ml-2">checkResult() — console output</span>
-    </div>
-    <div class="p-5">
-      <pre id="console-out" class="font-mono-custom text-sm text-[#a0aec8] leading-relaxed whitespace-pre-wrap"></pre>
-    </div>
-  </section>
 
-  <!-- Scope Note -->
-  <div class="max-w-3xl mx-auto bg-[rgba(167,139,250,0.07)] border border-[rgba(167,139,250,0.2)] rounded-2xl p-4 flex gap-3 items-start">
-    <span class="text-xl flex-shrink-0 mt-0.5">🔒</span>
-    <p class="font-mono-custom text-xs text-[#b8a8e8] leading-relaxed">
-      <strong class="text-accent2 font-medium">Scope:</strong>
-      Inside <code>checkResult()</code>, the variable <code>let schoolName = "Corestream Academy"</code> is declared.
-      It only exists <strong class="text-accent2">inside</strong> that function's curly braces <code>{ }</code>.
-      Trying to use <code>schoolName</code> outside throws a <strong class="text-fail">ReferenceError: schoolName is not defined</strong>.
-    </p>
-  </div>
 
   <script>
     // ── DATA ──────────────────────────────────────────────────────────
@@ -153,10 +131,6 @@
       // Scope: schoolName only exists inside this function
       let schoolName = "Corestream Academy";
 
-      let lines = [];
-      lines.push({ text: "// " + schoolName,                cls: "c-purple" });
-      lines.push({ text: "// ─────────────────────────────", cls: "c-muted"  });
-
       let totalScore = 0;
       let passCount  = 0;
       let failCount  = 0;
@@ -166,32 +140,13 @@
         totalScore = totalScore + s.score;
 
         if (s.score >= 50) {
-          lines.push({ text: s.name + " passed with " + s.score, cls: "c-green" });
           passCount = passCount + 1;
         } else {
-          lines.push({ text: s.name + " failed with " + s.score, cls: "c-red" });
           failCount = failCount + 1;
-        }
-
-        if (s.age > 18) {
-          lines.push({ text: "  → " + s.name + " is an adult",     cls: "" });
-        } else {
-          lines.push({ text: "  → " + s.name + " is not an adult", cls: "c-yellow" });
         }
       }
 
       let average = totalScore / students.length;
-
-      lines.push({ text: "// ─────────────────────────────",                  cls: "c-muted" });
-      lines.push({ text: "Average score is " + Math.round(average),           cls: "c-blue"  });
-      lines.push({ text: "// ─────────────────────────────",                  cls: "c-muted" });
-      lines.push({ text: "// Outside this function:",                         cls: "c-muted" });
-      lines.push({ text: "// console.log(schoolName) → ❌ ReferenceError",    cls: "c-red"   });
-
-      document.getElementById("console-out").innerHTML = lines.map(l =>
-        l.cls ? '<span class="' + l.cls + '">' + escHtml(l.text) + '</span>'
-              : escHtml(l.text)
-      ).join("\n");
 
       document.getElementById("stat-avg").textContent  = Math.round(average);
       document.getElementById("stat-pass").textContent = passCount;
