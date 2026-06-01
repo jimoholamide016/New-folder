@@ -1,15 +1,28 @@
 
 
 let students = [
-  { name: "John",  age: 20, score: 70 },
-  { name: "Mary",  age: 22, score: 45 },
-  { name: "Peter", age: 17, score: 88 }
+  { name: "Olamide", 
+     age: 20, 
+     score: 70 },
+
+  { name: "Shamsudeen", 
+     age: 12, 
+     score: 30 },
+
+  { name: "Abubakar",
+     age: 17, 
+     score: 88 },
+ {
+      name: "Muhammad",
+      age : 20,
+      score : 36
+     }
 ];
 
-function checkResult() {
+function checkResult( ) {
 
   let schoolName = "Corestream Academy";
-  console.log("School: " + schoolName);
+  console.log("School:" + schoolName);
 
 
   for (let i = 0; i < students.length; i++) {
@@ -17,7 +30,7 @@ function checkResult() {
 
 
 
-    if (s.score >= 50) {
+    if (s.score >= 39) {
       console.log(s.name + " passed with " + s.score);
     } else {
       console.log(s.name + " failed with " + s.score);
@@ -28,7 +41,7 @@ function checkResult() {
     if (s.age > 18) {
       console.log(s.name + " is an adult");
     } else {
-      console.log(s.name + " is not an adult");
+      console.log(s.name + " is a child");
     }
   }
 
@@ -46,5 +59,4 @@ checkResult();
 
 
 
-students.push({ name: "Ada", age: 19, score: 92 });
-checkResult(); 
+ 
