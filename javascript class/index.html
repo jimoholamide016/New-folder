@@ -13,7 +13,10 @@
 
         <label for="taskInput">New task</label>
         <input type="text" id="taskInput" placeholder="Enter a task" aria-label="Task input">
-        <button type="button" onclick="addTask()">Add Task</button>
+        <label for="taskTime">Time</label>
+        <input type="time" id="taskTime">
+
+        <button type="button" id="addBtn">Add Task</button>
 
         <p>Total Tasks: <span id="taskCount" aria-live="polite">0</span></p>
 

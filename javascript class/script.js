@@ -2,7 +2,10 @@ let taskCount = 0;
 
 function addTask() {
     const taskInput = document.getElementById("taskInput");
+    const taskTime = document.getElementById("taskTime").value;
     const taskText = taskInput.value.trim();
+     
+
 
     if (taskText === "") {
         alert("Please enter a task.");
@@ -12,7 +15,7 @@ function addTask() {
     const li = document.createElement("li");
 
     const taskSpan = document.createElement("span");
-    taskSpan.textContent = taskText;
+    taskSpan.textContent = `${taskText} (Due: ${taskTime})`;
 
     
     taskSpan.addEventListener("click", function () {
@@ -41,6 +44,26 @@ function addTask() {
     updateTaskCount();
 
     taskInput.value = "";
+    const now = new Date();
+
+const [hours, minutes] = taskTime.split(":");
+
+const dueTime = new Date();
+dueTime.setHours(hours);
+dueTime.setMinutes(minutes);
+dueTime.setSeconds(0);
+
+// If the selected time has already passed today,
+// schedule it for tomorrow.
+if (dueTime < now) {
+    dueTime.setDate(dueTime.getDate() + 1);
+}
+
+const timeRemaining = dueTime - now;
+
+setTimeout(() => {
+    alert(`Reminder: ${taskText} is due now!`);
+}, timeRemaining);
 }
 
 function updateTaskCount() {

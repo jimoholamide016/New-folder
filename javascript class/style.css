@@ -52,3 +52,6 @@ li {
     border: none;
     padding: 5px 10px;
 }
+#taskTime {
+    width: 10%;
+}
