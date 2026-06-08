@@ -14,15 +14,17 @@ function addTask() {
     const taskSpan = document.createElement("span");
     taskSpan.textContent = taskText;
 
-    // Mark as completed
+    
     taskSpan.addEventListener("click", function () {
         taskSpan.classList.toggle("completed");
+
     });
 
-    // Delete task
+    
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "Delete";
     deleteBtn.classList.add("delete-btn");
+
 
     deleteBtn.addEventListener("click", function () {
         li.remove();
